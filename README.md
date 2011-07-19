@@ -8,6 +8,7 @@ Steps
 -----
 
 If you haven't already:
+
   * download and install the [EC2 API tools](http://aws.amazon.com/developertools/351) (e.g., into `~/tools/`)
   * generate a X.509 certificate (both public `cert-...pem` and private `pk-...pem` files) from the [AWS Security Credentials page](https://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key)
   * generate a keypair (`statsd_setup.pem`) from the [AWS Management Console](https://console.aws.amazon.com)
@@ -37,14 +38,14 @@ Finally, start the instances and modify some basic security settings:
 
 I use [spatula](http://github.com/trotter/spatula) to apply chef recipes to simple environments. Run `ec2-describe-instances` to view the new instance's external IP, then substitute it in the following commands (run from this project's root directory):
 
-    $ spatula prepare ubuntu@184.72.76.150 --identity ~/.ec2/statsd_setup.pem  # set up chef prerequisites
-    $ spatula cook ubuntu@184.72.76.150 --identity ~/.ec2/statsd_setup.pem     # apply recipes for statsd and graphite
+    $ spatula prepare ubuntu@184.72.76.150 --identity ~/.ec2/statsd_setup.pem    # set up chef prerequisites
+    $ spatula cook ubuntu@184.72.76.150 node --identity ~/.ec2/statsd_setup.pem  # apply recipes for statsd and graphite
 
 At this point, Statsd and Graphite are ready to start tracking metrics. Visit your instance in a browser to access Graphite's web interface.
 
 
-Tracking statistics
--------------------
+Tracking application metrics
+----------------------------
 
 I added the `statsd-ruby` gem to my app's `Gemfile` and created an initializer with something like:
 
@@ -67,3 +68,5 @@ Credits
 -------
 
 All of the included cookbooks are from third parties and can be found at the [Opscode Cookbooks Directory](http://community.opscode.com/cookbooks).
+
+Statsd, of course, is the tiny and powerful daemon from Etsy for passing application event data to Graphite. See [their blog post](http://codeascraft.etsy.com/2011/02/15/measure-anything-measure-everything/). It's based on [earlier work from Flickr](http://code.flickr.com/blog/2008/10/27/counting-timing/).
